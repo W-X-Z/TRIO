@@ -1,0 +1,209 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.game-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.game-scores {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.player-score, .computer-score {
+  margin: 0 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.player-score {
+  color: #2ecc71;
+}
+
+.computer-score {
+  color: #e74c3c;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-status {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+}
+
+.player-status, .computer-status {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 15px;
+  width: 48%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.player-status.active, .computer-status.active {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.player-status.active {
+  border-left: 5px solid #2ecc71;
+}
+
+.computer-status.active {
+  border-left: 5px solid #e74c3c;
+}
+
+.player-status h2, .computer-status h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.player-status p, .computer-status p {
+  margin: 8px 0;
+  color: #666;
+}
+
+.thinking {
+  color: #e74c3c !important;
+  font-weight: bold;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.no-team-container {
+  margin-top: 20px;
+}
+
+.no-team-btn {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  background-color: #f39c12;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.no-team-btn:hover:not(:disabled) {
+  background-color: #e67e22;
+  transform: translateY(-2px);
+}
+
+.no-team-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+}
+
+.pause-btn {
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.pause-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.pause-btn.paused {
+  background-color: #e74c3c;
+}
+
+.pause-btn.paused:hover {
+  background-color: #c0392b;
+}
+
+.validation-result {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.validation-result.valid {
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+}
+
+.validation-result.invalid {
+  background-color: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+}
+
+@media (max-width: 600px) {
+  .game-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .pause-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .game-scores {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .player-score, .computer-score {
+    margin: 0;
+  }
+} 
