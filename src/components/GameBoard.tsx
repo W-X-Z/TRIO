@@ -48,7 +48,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const getAlignmentText = (alignment: Card['alignment']): string => {
     const alignmentMap: Record<Card['alignment'], string> = {
       'cold': '냉철',
-      'order': '정렬',
+      'order': '열정',
       'chaos': '혼돈'
     };
     return alignmentMap[alignment];
