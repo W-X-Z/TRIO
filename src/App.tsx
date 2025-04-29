@@ -31,11 +31,15 @@ function App() {
   // 가능한 모든 3장 조합을 확인하는 함수
   const findAllValidCombinations = useCallback((): Card[][] => {
     if (!board || board.length < 9) {
+      console.warn('보드에 카드가 충분하지 않습니다:', board?.length);
       return [];
     }
     
     const boardCards = board.slice(0, 9);
     const validCombinations: Card[][] = [];
+    
+    // 디버깅용 로그 추가
+    console.log('보드 카드 수:', boardCards.length);
     
     // 모든 가능한 3장 조합 생성
     for (let i = 0; i < boardCards.length; i++) {
@@ -43,12 +47,18 @@ function App() {
         for (let k = j + 1; k < boardCards.length; k++) {
           const combination = [boardCards[i], boardCards[j], boardCards[k]];
           // 유효한 조합인지 확인
-          if (compareAttributes(combination).isValid) {
+          const result = compareAttributes(combination);
+          if (result.isValid) {
             validCombinations.push(combination);
+            // 디버깅용 로그 추가
+            console.log('유효한 조합 발견:', combination.map(card => card.id));
           }
         }
       }
     }
+    
+    // 디버깅용 로그 추가
+    console.log('발견된 유효한 조합 수:', validCombinations.length);
     
     return validCombinations;
   }, [board]);
@@ -72,15 +82,22 @@ function App() {
       
       const validCombinations = findAllValidCombinations();
       
+      // 디버깅용 로그 추가
+      console.log('컴퓨터 턴 - 유효한 조합 수:', validCombinations.length);
+      
       if (validCombinations.length > 0) {
         // 유효한 조합이 있을 경우 랜덤으로 하나 선택
         const randomIndex = Math.floor(Math.random() * validCombinations.length);
         const selectedCombination = validCombinations[randomIndex];
         
+        // 디버깅용 로그 추가
+        console.log('컴퓨터가 선택한 조합:', selectedCombination.map(card => card.id));
+        
         // 세 장의 카드를 한꺼번에 선택 (컴퓨터는 즉시 선택)
         setComputerSelectedCards(selectedCombination);
       } else {
         // 유효한 조합이 없을 경우 NO TEAM 선택
+        console.log('컴퓨터가 NO TEAM을 선택합니다. 유효한 조합이 없습니다.');
         executeComputerNoTeamFn();
       }
       
@@ -307,55 +324,53 @@ function App() {
           // 유효한 조합일 경우
           const selectedIds = computerSelectedCards.map(card => card.id);
           
+          // 디버깅용 로그 추가
+          console.log('컴퓨터가 선택한 카드 ID:', selectedIds);
+          
           // 검은색 페이드아웃 효과를 위해 선택된 카드 ID 저장
           setBlackFadingCards(selectedIds);
           
-          // 약간의 지연 후 점수 추가 및 UI 갱신
+          // 점수 추가 및 토스트 메시지 표시
+          setComputerScore(prevScore => prevScore + 1);
+          setToast({
+            isVisible: true,
+            type: 'error',
+            message: '컴퓨터가 조합을 찾았습니다! +1점'
+          });
+          
+          // 사용된 카드 ID 추가
+          setUsedCardIds(prev => [...prev, ...selectedIds]);
+          
+          // 페이드아웃 효과 후 새 카드로 교체
           setTimeout(() => {
-            setComputerScore(prevScore => prevScore + 1);
-            
-            // 토스트 메시지 표시
-            setToast({
-              isVisible: true,
-              type: 'error',
-              message: '컴퓨터가 조합을 찾았습니다! +1점'
-            });
-            
-            // 사용된 카드 ID 추가
-            setUsedCardIds(prev => [...prev, ...selectedIds]);
-            
-            // 타이머 설정: 페이드아웃 효과 후 새 카드로 교체
-            setTimeout(() => {
-              try {
-                // 선택된 카드 교체
-                const newBoard = refreshBoard(board, selectedIds, usedCardIds);
-                setBoard(newBoard);
-                // 페이드아웃 효과 해제
-                setBlackFadingCards([]);
-                // 선택 초기화
-                setComputerSelectedCards([]);
-                setSelectedCards([]);
-                // 처리 상태 해제
-                isProcessingRef.current = false;
-                
-                // 컴퓨터 다음 생각 시작
-                setTimeout(startComputerTurnFn, 100);
-                
-                // 개발 디버깅용: 중복 카드 체크
-                const newBoardIds = newBoard.map(card => card.id);
-                const uniqueIds = new Set(newBoardIds);
-                if (uniqueIds.size !== newBoardIds.length) {
-                  console.error('컴퓨터 턴 후 새 보드에 중복된 카드가 있습니다!', newBoardIds);
-                }
-              } catch (error) {
-                console.error('컴퓨터 선택 처리 완료 중 오류 발생:', error);
-                // 오류 복구
-                isProcessingRef.current = false;
-                setBlackFadingCards([]);
-                startNewRoundFn();
+            try {
+              // 선택된 카드 교체
+              const newBoard = refreshBoard(board, selectedIds, usedCardIds);
+              setBoard(newBoard);
+              
+              // 상태 초기화
+              setBlackFadingCards([]);
+              setComputerSelectedCards([]);
+              setSelectedCards([]);
+              isProcessingRef.current = false;
+              
+              // 컴퓨터 다음 생각 시작
+              setTimeout(startComputerTurnFn, 100);
+              
+              // 개발 디버깅용: 중복 카드 체크
+              const newBoardIds = newBoard.map(card => card.id);
+              const uniqueIds = new Set(newBoardIds);
+              if (uniqueIds.size !== newBoardIds.length) {
+                console.error('컴퓨터 턴 후 새 보드에 중복된 카드가 있습니다!', newBoardIds);
               }
-            }, 800);
-          }, 1000);
+            } catch (error) {
+              console.error('컴퓨터 선택 처리 완료 중 오류 발생:', error);
+              // 오류 복구
+              isProcessingRef.current = false;
+              setBlackFadingCards([]);
+              startNewRoundFn();
+            }
+          }, 1000); // 페이드아웃 시간을 1초로 통일
         } else {
           // 유효하지 않은 조합일 경우 (이 경우는 일어나지 않아야 함)
           console.error('컴퓨터가 유효하지 않은 조합을 선택했습니다:', computerSelectedCards);
@@ -370,6 +385,12 @@ function App() {
         setComputerSelectedCards([]);
         startComputerTurnFn();
       }
+    } else {
+      // 컴퓨터가 3장의 카드를 선택하지 않은 경우 (이 경우는 일어나지 않아야 함)
+      console.error('컴퓨터가 3장의 카드를 선택하지 않았습니다:', computerSelectedCards.length);
+      setComputerSelectedCards([]);
+      isProcessingRef.current = false;
+      startComputerTurnFn();
     }
   }, [computerSelectedCards.length, board, usedCardIds]);
   

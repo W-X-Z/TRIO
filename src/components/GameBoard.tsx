@@ -61,7 +61,12 @@ const GameBoard: React.FC<GameBoardProps> = ({
   
   // 카드가 검은색 페이드아웃 중인지 확인
   const isCardBlackFading = (card: Card): boolean => {
-    return blackFadingCards.includes(card.id);
+    const isFading = blackFadingCards.includes(card.id);
+    // 디버깅용 로그 추가
+    if (isFading) {
+      console.log('카드가 검은색 페이드아웃 중입니다:', card.id);
+    }
+    return isFading;
   };
   
   // 카드가 컴퓨터에 의해 선택되었는지 확인

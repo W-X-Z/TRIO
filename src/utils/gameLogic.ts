@@ -194,4 +194,38 @@ export const refreshBoard = (currentBoard: Card[], selectedCardIds: number[], us
   }
   
   return newBoard;
-}; 
+};
+
+export function findAllValidCombinations(board: Card[]): Card[][] {
+  const validCombinations: Card[][] = [];
+  
+  // 보드에 카드가 3장 미만인 경우 빈 배열 반환
+  if (board.length < 3) {
+    console.warn('보드에 카드가 3장 미만입니다:', board.length);
+    return validCombinations;
+  }
+  
+  // 디버깅용 로그 추가
+  console.log('보드 카드 수:', board.length);
+  
+  // 모든 가능한 3장의 조합을 생성
+  for (let i = 0; i < board.length - 2; i++) {
+    for (let j = i + 1; j < board.length - 1; j++) {
+      for (let k = j + 1; k < board.length; k++) {
+        const combination = [board[i], board[j], board[k]];
+        const validation = compareAttributes(combination);
+        
+        if (validation.isValid) {
+          validCombinations.push(combination);
+          // 디버깅용 로그 추가
+          console.log('유효한 조합 발견:', combination.map(card => card.id));
+        }
+      }
+    }
+  }
+  
+  // 디버깅용 로그 추가
+  console.log('찾은 유효한 조합 수:', validCombinations.length);
+  
+  return validCombinations;
+} 
