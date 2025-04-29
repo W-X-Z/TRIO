@@ -12,17 +12,17 @@ import { compareAttributes, initializeBoard, refreshBoard, findAllValidCombinati
 // 난이도별 설정
 const DIFFICULTY_SETTINGS = {
   easy: {
-    bossGaugeSpeed: 5000, // 5초
+    bossGaugeRate: 0.2, // 초당 0.2%씩 증가
     scoreMultiplier: 1,
     maxMistakes: 5
   },
   normal: {
-    bossGaugeSpeed: 3000, // 3초
+    bossGaugeRate: 0.4, // 초당 0.4%씩 증가
     scoreMultiplier: 2,
     maxMistakes: 3
   },
   hard: {
-    bossGaugeSpeed: 1500, // 1.5초
+    bossGaugeRate: 1, // 초당 0.8%씩 증가
     scoreMultiplier: 3,
     maxMistakes: 1
   }
@@ -63,7 +63,6 @@ const GamePage: React.FC = () => {
       setPlayerGauge(prev => {
         const newValue = Math.min(100, prev + 20);
         if (newValue >= 100) {
-          // 플레이어 승리
           setToast({
             isVisible: true,
             type: 'success',
@@ -77,9 +76,8 @@ const GamePage: React.FC = () => {
       });
     } else {
       setBossGauge(prev => {
-        const newValue = Math.min(100, prev + 5);
+        const newValue = Math.min(100, prev + settings.bossGaugeRate);
         if (newValue >= 100) {
-          // 보스 승리
           setToast({
             isVisible: true,
             type: 'error',
@@ -92,6 +90,12 @@ const GamePage: React.FC = () => {
         return newValue;
       });
     }
+  }, [settings.bossGaugeRate]);
+
+  // 게이지 충돌 처리
+  const handleGaugeCollision = useCallback((newPlayerGauge: number, newBossGauge: number) => {
+    setPlayerGauge(newPlayerGauge);
+    setBossGauge(newBossGauge);
   }, []);
 
   // 게임 리셋
@@ -105,16 +109,23 @@ const GamePage: React.FC = () => {
     startNewRound();
   }, []);
 
-  // 자동 보스 게이지 증가
+  // 자동 보스 게이지 증가 (requestAnimationFrame 사용)
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (playerGauge < 100 && bossGauge < 100 && !isGameOver) {
-        increaseGauge(false);
-      }
-    }, settings.bossGaugeSpeed);
+    let lastTime = performance.now();
+    let animationFrameId: number;
 
-    return () => clearInterval(timer);
-  }, [increaseGauge, playerGauge, bossGauge, settings.bossGaugeSpeed, isGameOver]);
+    const updateGauge = (currentTime: number) => {
+      if (playerGauge < 100 && bossGauge < 100 && !isGameOver) {
+        const deltaTime = (currentTime - lastTime) / 1000; // 초 단위로 변환
+        setBossGauge(prev => Math.min(100, prev + settings.bossGaugeRate * deltaTime));
+        lastTime = currentTime;
+      }
+      animationFrameId = requestAnimationFrame(updateGauge);
+    };
+
+    animationFrameId = requestAnimationFrame(updateGauge);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [playerGauge, bossGauge, isGameOver, settings.bossGaugeRate]);
 
   // 카드 선택 핸들러
   const handleCardSelect = useCallback((card: Card) => {
@@ -292,15 +303,14 @@ const GamePage: React.FC = () => {
       <h1>TRIO</h1>
       <div className="game-area">
         <div className="game-container" ref={boardRef}>
-          {boardWidth > 0 && (
-            <div className="gauge-wrapper">
-              <GameGauge
-                playerGauge={playerGauge}
-                bossGauge={bossGauge}
-                width={boardWidth}
-              />
-            </div>
-          )}
+          <div className="gauge-wrapper">
+            <GameGauge 
+              playerGauge={playerGauge} 
+              bossGauge={bossGauge} 
+              width={boardWidth} 
+              onGaugeCollision={handleGaugeCollision}
+            />
+          </div>
           <GameBoard 
             board={board}
             selectedCards={selectedCards}
