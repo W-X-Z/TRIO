@@ -1,0 +1,137 @@
+.game-gauge {
+  position: relative;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.profile {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background: #fff;
+  z-index: 2;
+  position: absolute;
+  flex-shrink: 0;
+  top: 50%;
+}
+
+.profile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.boss-profile {
+  border-color: #ff4444;
+  right: 50%;
+  transform: translateY(-50%) translateX(calc(50% + 400px));
+}
+
+.boss-profile::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255, 0, 0, 0.2), transparent);
+  pointer-events: none;
+}
+
+.player-profile {
+  border-color: #44ff44;
+  left: 50%;
+  transform: translateY(-50%) translateX(calc(-50% - 400px));
+}
+
+.player-profile::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(0, 255, 0, 0.2), transparent);
+  pointer-events: none;
+}
+
+.gauge-container {
+  position: relative;
+  width: 800px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.boss-gauge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(to left, #1a1a1a, #4a4a4a);
+  transition: width 3s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.player-gauge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(to right, 
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #00ff00,
+    #0000ff,
+    #4b0082,
+    #8f00ff
+  );
+  transition: width 0.5s ease;
+  animation: rainbow 5s linear infinite;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes rainbow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .game-gauge {
+    height: 50px;
+    padding: 0;
+    margin: 0 0 15px 0;
+  }
+
+  .profile {
+    width: 50px;
+    height: 50px;
+  }
+
+  .gauge-container {
+    width: calc(100% - 60px);
+    height: 30px;
+    border-radius: 15px;
+  }
+
+  .boss-profile {
+    transform: translateY(-50%) translateX(calc(50% + 50%));
+  }
+
+  .player-profile {
+    transform: translateY(-50%) translateX(calc(-50% - 50%));
+  }
+} 

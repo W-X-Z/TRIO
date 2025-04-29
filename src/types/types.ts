@@ -12,7 +12,7 @@ export interface Card {
 
 export interface ValidationResult {
   isValid: boolean;
-  message?: string;
+  message: string;
 }
 
 export interface BoardState {
@@ -20,7 +20,7 @@ export interface BoardState {
   selectedCards: Card[];
 }
 
-export interface ToastMessage {
+export interface ToastState {
   isVisible: boolean;
   type: 'success' | 'error';
   message: string;

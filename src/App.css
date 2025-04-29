@@ -22,6 +22,14 @@ h1 {
   color: #2c3e50;
 }
 
+.game-area {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .game-controls {
   display: flex;
   justify-content: space-between;
@@ -37,26 +45,82 @@ h1 {
   font-weight: bold;
 }
 
-.player-score, .computer-score {
+.player-score {
   margin: 0 20px;
   padding: 10px 20px;
   border-radius: 5px;
   background-color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.player-score {
   color: #2ecc71;
 }
 
-.computer-score {
-  color: #e74c3c;
-}
-
 .game-container {
+  width: 100%;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  margin-top: 100px; /* 게이지를 위한 공간 */
+}
+
+.gauge-wrapper {
+  position: absolute;
+  top: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  z-index: 1;
+}
+
+.player-profile {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(-50%);
+}
+
+.boss-profile {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(50%);
+}
+
+.no-team-container {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.no-team-btn {
+  width: 100%;
+  max-width: 800px;
+  padding: 15px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.no-team-btn:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.no-team-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .game-status {
@@ -110,35 +174,6 @@ h1 {
   0% { opacity: 0.7; }
   50% { opacity: 1; }
   100% { opacity: 0.7; }
-}
-
-.no-team-container {
-  margin-top: 20px;
-}
-
-.no-team-btn {
-  padding: 12px 24px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border: none;
-  background-color: #f39c12;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.no-team-btn:hover:not(:disabled) {
-  background-color: #e67e22;
-  transform: translateY(-2px);
-}
-
-.no-team-btn:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-  transform: none;
-  opacity: 0.7;
 }
 
 .pause-btn {
@@ -203,7 +238,22 @@ h1 {
     gap: 10px;
   }
   
-  .player-score, .computer-score {
+  .player-score {
     margin: 0;
+  }
+  
+  .game-area {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-container {
+    margin-top: 80px;
+  }
+
+  .gauge-wrapper {
+    top: -70px;
   }
 } 
